@@ -63,7 +63,13 @@ public class Term implements Comparable<Term> {
         }
 
         public int compare(Term v, Term w) {
-            return v.compareTo(w);
+          int rightBound = Math.min(v.query.length(),w.query.length());
+            // String subV = v.query.substring(0,Math.min(r,rightBound));
+            // String subW = w.query.substring(0,Math.min(r,rightBound));
+
+            String subV = v.query.substring(0,r);
+            String subW = w.query.substring(0,r);
+            return subV.compareTo(subW);
         }
     }
 

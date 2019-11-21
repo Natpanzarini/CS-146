@@ -4,8 +4,8 @@ import edu.princeton.cs.algs4.StdOut;
 import java.util.Arrays;
 import java.util.Comparator;
 
-// A data type that provides autocomplete functionality for a given set of 
-// string and weights, using Term and BinarySearchDeluxe. 
+// A data type that provides autocomplete functionality for a given set of
+// string and weights, using Term and BinarySearchDeluxe.
 public class Autocomplete {
     ...
     
@@ -32,10 +32,10 @@ public class Autocomplete {
         int N = in.readInt();
         Term[] terms = new Term[N];
         for (int i = 0; i < N; i++) {
-            long weight = in.readLong(); 
-            in.readChar(); 
-            String query = in.readLine(); 
-            terms[i] = new Term(query.trim(), weight); 
+            long weight = in.readLong();
+            in.readChar();
+            String query = in.readLine();
+            terms[i] = new Term(query.trim(), weight);
         }
         int k = Integer.parseInt(args[1]);
         Autocomplete autocomplete = new Autocomplete(terms);

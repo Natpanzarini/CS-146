@@ -9,47 +9,104 @@ import java.util.Comparator;
 public class BinarySearchDeluxe {
     // The index of the first key in a[] that equals the search key,
     // or -1 if no such key.
-    public static <Key> int firstIndexOf(Key[] a, Key key,
-                                         Comparator<Key> comparator) {
+    public static <Key> int firstIndexOf(Key[] a, Key key, Comparator<Key> comparator) {
 
         if (a == null || key == null || comparator == null) {
             throw new java.lang.NullPointerException();
         }
 
-        comparator = new byPrefixOrder();
+        return firstBinarySearch(a,key,comparator,0,a.length - 1,a.length-1);
         //implement binary search for first key in a[]
-        int mid = (a.length - 1) / 2;
-        if (comparator.compare(a[mid], key) == 0) {
-            System.out.print("0 ");
-            return mid;
-        } else if (comparator.compare(a[mid], key) < 0) {
-            System.out.print("< ");
-            return firstIndexOf(Arrays.copyOfRange(a, 0, mid - 1), key, comparator);
-        } else if (comparator.compare(a[mid], key) > 0) {
-            System.out.print("> ");
-            return firstIndexOf(Arrays.copyOfRange(a, mid + 1, a.length - 1), key, comparator);
-        }
-        System.out.print("check conditionals");
-        return -1;
+        // int mid = (a.length - 1) / 2;
+        //
+        // if (comparator.compare(a[mid], key) == 0) {
+        //     System.out.print("0 ");
+        //     return mid;
+        // } else if (comparator.compare(a[mid], key) < 0) {
+        //     System.out.print("< ");
+        //     return firstIndexOf(Arrays.copyOfRange(a, 0, mid - 1), key, comparator);
+        // } else if (comparator.compare(a[mid], key) > 0) {
+        //     System.out.print("> ");
+        //     return firstIndexOf(Arrays.copyOfRange(a, mid + 1, a.length - 1), key, comparator);
+        // }
+        //
+        // return -1;
     }
 
     // The index of the last key in a[] that equals the search key,
     // or -1 if no such key.
-    public static <Key> int lastIndexOf(Key[] a, Key key,
-                                        Comparator<Key> comparator) {
+    public static <Key> int lastIndexOf(Key[] a, Key key, Comparator<Key> comparator) {
         if (a == null || key == null || comparator == null) {
             throw new java.lang.NullPointerException();
         }
 
+        return lastBinarySearch(a,key,comparator,0,a.length - 1,0);
+
         //implement binary search for last key in a[]
-        int mid = (a.length - 1) / 2;
+        // int mid = (left + (right - 1))/2;
+        //
+        // if (comparator.compare(a[mid], key) == 0)
+        // {
+        //     return mid;
+        // } else if (comparator.compare(a[mid], key) < 0)
+        // {
+        //     return firstIndexOf(Arrays.copyOfRange(a, 0, mid - 1), key, comparator);
+        // } else
+        // {
+        //     return firstIndexOf(Arrays.copyOfRange(a, mid + 1, a.length - 1), key, comparator);
+        // }
+    }
+
+    private static <Key> int firstBinarySearch(Key[] a, Key key, Comparator<Key> comparator, int left, int right,int currEarliest){
+      //System.out.println(currEarliest);
+      int mid = (left + right)/2;
+      if(right > left){
         if (comparator.compare(a[mid], key) == 0) {
-            return mid;
+          currEarliest = mid;
+          if(right - left == 1){
+            return currEarliest;
+          }
+            return Math.min(firstBinarySearch(a,key,comparator,0,mid-1,currEarliest),currEarliest);
+        } else if (comparator.compare(a[mid], key) > 0) {
+          if(right - left == 1){
+            return currEarliest;
+          }
+            return Math.min(firstBinarySearch(a,key,comparator,left,mid-1,currEarliest),currEarliest);
         } else if (comparator.compare(a[mid], key) < 0) {
-            return firstIndexOf(Arrays.copyOfRange(a, 0, mid - 1), key, comparator);
-        } else {
-            return firstIndexOf(Arrays.copyOfRange(a, mid + 1, a.length - 1), key, comparator);
+          if(right - left == 1){
+            return currEarliest;
+          }
+            return Math.min(firstBinarySearch(a,key,comparator,mid+1,right,currEarliest),currEarliest);
         }
+      }
+
+      return -1;
+    }
+
+    private static <Key> int lastBinarySearch(Key[] a, Key key, Comparator<Key> comparator, int left, int right,int currLatest){
+      //System.out.println(currLatest);
+      int mid = (left + right)/2;
+      if(right > left){
+        if (comparator.compare(a[mid], key) == 0) {
+          currLatest = mid;
+          if(right - left == 1){
+            return currLatest;
+          }
+            return Math.max(lastBinarySearch(a,key,comparator,mid+1,right,currLatest),currLatest);
+        } else if (comparator.compare(a[mid], key) > 0) {
+          if(right - left == 1){
+            return currLatest;
+          }
+            return Math.max(lastBinarySearch(a,key,comparator,left,mid-1,currLatest),currLatest);
+        } else if (comparator.compare(a[mid], key) < 0) {
+          if(right - left == 1){
+            return currLatest;
+          }
+            return Math.max(lastBinarySearch(a,key,comparator,mid+1,right,currLatest),currLatest);
+        }
+      }
+
+      return -1;
     }
 
     // Test client. [DO NOT EDIT]
@@ -69,7 +126,13 @@ public class BinarySearchDeluxe {
         Term term = new Term(prefix);
         Comparator<Term> prefixOrder = Term.byPrefixOrder(prefix.length());
         int i = BinarySearchDeluxe.firstIndexOf(terms, term, prefixOrder);
+        System.out.println(i);
+        System.out.println(terms[i]);
+        System.out.println(terms[i+3]);
         int j = BinarySearchDeluxe.lastIndexOf(terms, term, prefixOrder);
+        System.out.println(j);
+        System.out.println(terms[j]);
+        System.out.println(terms[j-3]);
         int count = i == -1 && j == -1 ? 0 : j - i + 1;
         StdOut.println(count);
     }
