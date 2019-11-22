@@ -64,12 +64,18 @@ public class Term implements Comparable<Term> {
 
         public int compare(Term v, Term w) {
           int rightBound = Math.min(v.query.length(),w.query.length());
-            // String subV = v.query.substring(0,Math.min(r,rightBound));
-            // String subW = w.query.substring(0,Math.min(r,rightBound));
+          String subV = v.query.substring(0,Math.min(r,rightBound));
+          String subW = w.query.substring(0,Math.min(r,rightBound));
 
-            String subV = v.query.substring(0,r);
-            String subW = w.query.substring(0,r);
-            return subV.compareTo(subW);
+            for (int i = 0; i < r; i++) {
+                if (v.query.charAt(i) < w.query.charAt(i)) {
+                    return -1;
+                } else if (v.query.charAt(i) > w.query.charAt(i)) {
+                    return 1;
+                }
+            }
+
+            return 0;
         }
     }
 
@@ -80,12 +86,20 @@ public class Term implements Comparable<Term> {
         //smaller = comes before other one in the alphabet = -1
         //bigger = comes after other one in the alphabet = 1
         //equal = same string = 0;
-        for (int i = 0; i < Math.min(this.query.length(), that.query.length()); i++) {
+        for (int i = 0; i < Math.min(this.query.length(),that.query.length()); i++) {
             if (this.query.charAt(i) < that.query.charAt(i)) {
                 return -1;
             } else if (this.query.charAt(i) > that.query.charAt(i)) {
                 return 1;
             }
+        }
+
+        //here we check if terms are different sizes
+        if(this.query.length() < that.query.length()){
+          return -1;
+        }
+        else if(this.query.length() > that.query.length()){
+          return 1;
         }
 
         //terms have to be equal at the point, so we return 0.

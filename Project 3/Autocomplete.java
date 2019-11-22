@@ -4,25 +4,62 @@ import edu.princeton.cs.algs4.StdOut;
 import java.util.Arrays;
 import java.util.Comparator;
 
+@SuppressWarnings({"rawtypes", "unchecked"})
 // A data type that provides autocomplete functionality for a given set of
 // string and weights, using Term and BinarySearchDeluxe.
 public class Autocomplete {
-    ...
-    
+    private Term[] terms;
+    private BinarySearchDeluxe search;
+
     // Initialize the data structure from the given array of terms.
     public Autocomplete(Term[] terms) {
-        ...
+      if(terms == null){
+        throw new java.lang.NullPointerException();
+      }
+        search = new BinarySearchDeluxe();
+        this.terms = terms;
+        Arrays.sort(this.terms);
     }
 
     // All terms that start with the given prefix, in descending order of
     // weight.
     public Term[] allMatches(String prefix) {
-        ...
+      if(prefix == null){
+        throw new java.lang.NullPointerException();
+      }
+
+      Term word = new Term(prefix);
+      Comparator comparator = Term.byPrefixOrder(prefix.length());
+
+      //to find all terms that match, we find left most term and right most term and take every index [left,right]
+
+      //finding first and last index of matching words
+      int left = BinarySearchDeluxe.firstIndexOf(terms, word, comparator);
+      int right = BinarySearchDeluxe.lastIndexOf(terms, word, comparator);
+
+      Term[] match = new Term[right-left];
+      int index = left;
+      for(int i = 0; i < match.length; i++){
+        if(index <= right){
+          match[i] = terms[index];
+          index++;
+        }
+      }
+
+      Comparator weightComp = Term.byReverseWeightOrder();
+      Arrays.sort(match,weightComp);
+
+      return match;
     }
 
     // The number of terms that start with the given prefix.
     public int numberOfMatches(String prefix) {
-        ...
+      Term word = new Term(prefix);
+      Comparator comparator = Term.byPrefixOrder(prefix.length());
+      int left = BinarySearchDeluxe.firstIndexOf(terms, word, comparator);
+      int right = BinarySearchDeluxe.lastIndexOf(terms, word, comparator);
+
+      return right - left;
     }
 
     // Entry point. [DO NOT EDIT]
