@@ -23,7 +23,7 @@ public class Term implements Comparable<Term> {
     // Construct a term given the associated query string and weight.
     public Term(String query, long weight) {
         if (query == null) {
-            throw new java.lang.NullPointerException();
+            throw new java.lang.NullPointerException("Query is null");
         } else if (weight < 0) {
             throw new java.lang.IllegalArgumentException();
         }
@@ -63,14 +63,24 @@ public class Term implements Comparable<Term> {
         }
 
         public int compare(Term v, Term w) {
-          int rightBound = Math.min(v.query.length(),w.query.length());
-          String subV = v.query.substring(0,Math.min(r,rightBound));
-          String subW = w.query.substring(0,Math.min(r,rightBound));
+          String subV = v.query.substring(0,Math.min(r,v.query.length()));
+          String subW = w.query.substring(0,Math.min(r,w.query.length()));
 
-            for (int i = 0; i < r; i++) {
-                if (v.query.charAt(i) < w.query.charAt(i)) {
+            // for (int i = 0; i < r; i++) {
+            //     if (v.query.charAt(i) < w.query.charAt(i)) {
+            //         return -1;
+            //     } else if (v.query.charAt(i) > w.query.charAt(i)) {
+            //         return 1;
+            //     }
+            // }
+
+            int temp = Math.min(v.query.length(),w.query.length());
+            int bound = Math.min(r,temp);
+
+            for (int i = 0; i < bound; i++) {
+                if (subV.charAt(i) < subW.charAt(i)) {
                     return -1;
-                } else if (v.query.charAt(i) > w.query.charAt(i)) {
+                } else if (subV.charAt(i) > subW.charAt(i)) {
                     return 1;
                 }
             }

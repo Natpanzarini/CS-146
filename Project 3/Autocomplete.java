@@ -18,7 +18,7 @@ public class Autocomplete {
       }
         search = new BinarySearchDeluxe();
         this.terms = terms;
-        Arrays.sort(this.terms);
+        Arrays.sort(this.terms); //Sorts terms into lexicographic order
     }
 
     // All terms that start with the given prefix, in descending order of
@@ -31,14 +31,28 @@ public class Autocomplete {
       Term word = new Term(prefix);
       Comparator comparator = Term.byPrefixOrder(prefix.length());
 
-      //to find all terms that match, we find left most term and right most term and take every index [left,right]
-
       //finding first and last index of matching words
       int left = BinarySearchDeluxe.firstIndexOf(terms, word, comparator);
       int right = BinarySearchDeluxe.lastIndexOf(terms, word, comparator);
 
-      Term[] match = new Term[right-left];
-      int index = left;
+      //Initializing match[], and copying all Terms that match prefix to match[]
+      int size = 0;
+      if(right >= left){
+        size = (right - left) + 1;
+      }
+      else{
+        size = 1;
+      }
+      Term[] match = new Term[size];
+
+      int index = 0;
+      if(left != -1){
+        index = left;
+      }
+      else if (right != -1){
+        index = right;
+      }
+
       for(int i = 0; i < match.length; i++){
         if(index <= right){
           match[i] = terms[index];

@@ -2,12 +2,12 @@
  *  @author Matthew Drabick
  *  @author Ming-Yee Tsang
  *  @author Andrew Ward
- *  
+ *
  *  Compilation:  javac AutocompleteGUI.java
  *  Execution:    java  AutocompleteGUI input.txt k
  *  Dependencies: In.java Autocomplete.java Term.java
- *    
- *    
+ *
+ *
  *  Interactive GUI used to demonstrate the Autocomplete data type.
  *
  *     * Reads a list of terms and weights from a file, specified as a
@@ -22,9 +22,9 @@
  *
  *
  *  BUG: Search bar and suggestion drop-down don't resize properly with window;
- *       they stay the same size when the window gets wider, and the weights 
+ *       they stay the same size when the window gets wider, and the weights
  *       get hidden when the window gets smaller.
- *  
+ *
  *  FEATURE: make weights be in left column instead of right column ?
  *           (to match toString() and output format of test client on assignment)
  *
@@ -43,6 +43,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -83,7 +87,7 @@ import edu.princeton.cs.algs4.In;
 public class AutocompleteGUI extends JFrame {
     // for serializable classes
     private static final long serialVersionUID = 1L;
-    
+
     private static final int DEF_WIDTH  = 850; // width of the GUI window
     private static final int DEF_HEIGHT = 400; // height of the GUI window
 
@@ -121,7 +125,7 @@ public class AutocompleteGUI extends JFrame {
         // Create and add a listener to the Search button
         JButton searchButton = new JButton("Search Google");
         searchButton.addActionListener(
-                new ActionListener() { 
+                new ActionListener() {
                     public void actionPerformed(ActionEvent ae) {
                         searchOnline(ap.getSelectedText());
                     }
@@ -130,7 +134,7 @@ public class AutocompleteGUI extends JFrame {
         // Create and add a listener to a "Show weights" checkbox
         JCheckBox checkbox = new JCheckBox("Show weights", null, displayWeights);
         checkbox.addActionListener(
-                new ActionListener() { 
+                new ActionListener() {
                     public void actionPerformed(ActionEvent ae) {
                         displayWeights = !displayWeights;
                         ap.update();
@@ -142,19 +146,19 @@ public class AutocompleteGUI extends JFrame {
                 layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(
                             GroupLayout.Alignment.TRAILING)
-                        .addComponent(textLabel, GroupLayout.PREFERRED_SIZE, 
-                                GroupLayout.DEFAULT_SIZE, 
+                        .addComponent(textLabel, GroupLayout.PREFERRED_SIZE,
+                                GroupLayout.DEFAULT_SIZE,
                                 GroupLayout.PREFERRED_SIZE)
-                        .addComponent(checkbox, GroupLayout.PREFERRED_SIZE, 
-                                GroupLayout.DEFAULT_SIZE, 
+                        .addComponent(checkbox, GroupLayout.PREFERRED_SIZE,
+                                GroupLayout.DEFAULT_SIZE,
                                 GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
                         GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE)
                 .addComponent(ap, 0, GroupLayout.DEFAULT_SIZE, DEF_WIDTH)
-                .addComponent(searchButton, GroupLayout.PREFERRED_SIZE, 
+                .addComponent(searchButton, GroupLayout.PREFERRED_SIZE,
                         GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE)
                 );
-        
+
         layout.setVerticalGroup(
                 layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(
@@ -167,42 +171,42 @@ public class AutocompleteGUI extends JFrame {
                 );
     }
 
-    
+
     /**
      * The panel that interfaces with the Autocomplete object.  It consists
      * of a search bar that text can be entered into, and a drop-down list
      * of suggestions auto-completing the user's query.
-     * 
+     *
      */
     private class AutocompletePanel extends JPanel {
         // for serializable classes
         private static final long serialVersionUID = 1L;
-        
+
         private final JTextField searchText;      // the search bar
-        private Autocomplete auto;                // the Autocomplete object 
+        private Autocomplete auto;                // the Autocomplete object
         private String[] results = new String[k]; // an array of matches
         //// private JList<String> suggestions;   // a list of autocomplete matches (Java 7)
         private JList suggestions;                // a list of autocomplete matches (Java 6)
-        private JScrollPane scrollPane;           // the scroll bar on the side of the 
+        private JScrollPane scrollPane;           // the scroll bar on the side of the
         private JPanel suggestionsPanel;          // the dropdown menu of suggestions
-        private int extraMargin = 5;              // extra room to leave at the bottom of 
+        private int extraMargin = 5;              // extra room to leave at the bottom of
                                                   // the suggestion drop-down below the
                                                   // last suggestion
 
         // Note: can't use JList<String> in Java 6
 
-        // TODO: change how this is implemented so it is dynamic; 
+        // TODO: change how this is implemented so it is dynamic;
         // shouldn't have to define a column number.
-        
-        // Keep these next two values in sync! - used to keep the search box 
+
+        // Keep these next two values in sync! - used to keep the search box
         // the same width as the drop-down
         // DEF_COLUMNS should be the number of characters in suggListLen
 
         // number of columns in the search text that is kept
-        private final int DEF_COLUMNS = 45; 
-        
+        private final int DEF_COLUMNS = 45;
+
         // an example of one of the longest strings in the database
-        private final String suggListLen = 
+        private final String suggListLen =
                 "<b>Harry Potter and the Deathly Hallows: Part 1 (2010)</b>";
 
         /**
@@ -251,11 +255,11 @@ public class AutocompleteGUI extends JFrame {
 
             GroupLayout layout = new GroupLayout(this);
             this.setLayout(layout);
-            
+
             // create the search text, and allow the user to interact with it
             searchText = new JTextField(DEF_COLUMNS);
             searchText.setMaximumSize(new Dimension(
-                    searchText.getMaximumSize().width, 
+                    searchText.getMaximumSize().width,
                     searchText.getPreferredSize().height));
             searchText.getInputMap().put(
                     KeyStroke.getKeyStroke("UP"),   "none");
@@ -270,40 +274,40 @@ public class AutocompleteGUI extends JFrame {
                         }
                         public void focusLost(FocusEvent e) { }
                     });
-            
+
             // create the search text box
             JPanel searchTextPanel = new JPanel();
             searchTextPanel.add(searchText);
             searchTextPanel.setBorder(
                     BorderFactory.createEmptyBorder(0, 0, 0, 0));
             searchTextPanel.setLayout(new GridLayout(1, 1));
-            
+
             // create the drop-down menu items
             int fontsize = 13;
             int cellHeight = 20;
-            
+
             // suggestions = new JList<String>(results);
             suggestions = new JList(results);
             suggestions.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
             suggestions.setVisible(false);
-            suggestions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); 
+            suggestions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             suggestions.setMaximumSize(new Dimension(
-                    searchText.getMaximumSize().width, 
+                    searchText.getMaximumSize().width,
                     suggestions.getPreferredSize().height));
-            
+
             // Set to make equal to the width of the textfield
-            suggestions.setPrototypeCellValue(suggListLen);   
+            suggestions.setPrototypeCellValue(suggListLen);
             suggestions.setFont(
                     suggestions.getFont().deriveFont(Font.PLAIN, fontsize));
             suggestions.setFixedCellHeight(cellHeight);
-            
+
             // add arrow-key interactivity to the drop-down menu items
             Action makeSelection = new AbstractAction() {
                 // for serializable classes
                 private static final long serialVersionUID = 1L;
                 public void actionPerformed(ActionEvent e) {
                     if (!suggestions.isSelectionEmpty()) {
-                        String selection = 
+                        String selection =
                                 (String) suggestions.getSelectedValue();
                         if (displayWeights)
                             selection = selection.substring(
@@ -313,7 +317,7 @@ public class AutocompleteGUI extends JFrame {
                         getSuggestions(selection);
                     }
                     searchOnline(searchText.getText());
-                }  
+                }
             };
             Action moveSelectionUp =  new AbstractAction() {
                 // for serializable classes
@@ -386,20 +390,20 @@ public class AutocompleteGUI extends JFrame {
             int searchBarHeight     = searchText.getPreferredSize().height;
             int suggestionHeight    = suggestions.getFixedCellHeight();
             int maxSuggestionHeight = DEF_HEIGHT*2;
-            
+
             suggestionsPanel.setPreferredSize(new Dimension(preferredWidth, suggestionHeight));
             suggestionsPanel.setMaximumSize(new Dimension(maxWidth, maxSuggestionHeight));
             suggestionsPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
             suggestionsPanel.add(scrollPane);
             suggestionsPanel.setLayout(new GridLayout(1, 1));
-            
+
             this.setPreferredSize(new Dimension(preferredWidth, this.getPreferredSize().height));
             this.setMaximumSize(new Dimension(preferredWidth, searchBarHeight + maxSuggestionHeight));
-            
+
             searchTextPanel.setPreferredSize(new Dimension(preferredWidth, searchBarHeight));
             searchTextPanel.setMaximumSize(new Dimension(maxWidth, searchBarHeight));
             searchText.setMaximumSize(new Dimension(maxWidth, searchBarHeight));
-            
+
             // add mouse interactivity with the drop-down menu
             suggestions.addMouseListener(
                     new MouseAdapter() {
@@ -408,7 +412,7 @@ public class AutocompleteGUI extends JFrame {
                             JList theList = (JList) mouseEvent.getSource();
                             if (mouseEvent.getClickCount() >= 1) {
                                 int index = theList.locationToIndex(
-                                        mouseEvent.getPoint()); 
+                                        mouseEvent.getPoint());
                                 if (index >= 0) {
                                     String selection = getSelectedText();
                                     searchText.setText(selection);
@@ -437,13 +441,13 @@ public class AutocompleteGUI extends JFrame {
             suggestions.addMouseMotionListener(
                     new MouseInputAdapter() {
                         @Override
-                        
+
                         // Google a term when a user clicks on the dropdown menu
                         public void mouseClicked(MouseEvent mouseEvent) {
                             JList theList = (JList) mouseEvent.getSource();
                             if (mouseEvent.getClickCount() >= 1) {
                                 int index = theList.locationToIndex(
-                                        mouseEvent.getPoint()); 
+                                        mouseEvent.getPoint());
                                 if (index >= 0) {
                                     String selection = getSelectedText();
                                     searchText.setText(selection);
@@ -472,7 +476,7 @@ public class AutocompleteGUI extends JFrame {
                             theList.setSelectedIndex(index);
                         }
                     });
-            
+
             // add a listener that allows updates each time the user types
             searchText.getDocument().addDocumentListener(
                     new DocumentListener() {
@@ -480,18 +484,18 @@ public class AutocompleteGUI extends JFrame {
                         {
                             changedUpdate(e);
                         }
-                        public void removeUpdate(DocumentEvent e) 
+                        public void removeUpdate(DocumentEvent e)
                         { changedUpdate(e); }
                         public void changedUpdate(DocumentEvent e)
                         {
                             String text = searchText.getText();
-                            
+
                             // updates the drop-down menu
-                            getSuggestions(text);                   
+                            getSuggestions(text);
                             updateListSize();
                         }
                     });
-            
+
             // When a user clicks on a suggestion, Google it
             searchText.addActionListener(
                     new ActionListener() {
@@ -502,22 +506,22 @@ public class AutocompleteGUI extends JFrame {
                             searchOnline(searchText.getText());
                         }
                     });
-            
+
             // Define the layout of the text box and suggestion dropdown
             layout.setHorizontalGroup(
                     layout.createSequentialGroup()
                     .addGroup(layout.createParallelGroup(
                                 GroupLayout.Alignment.LEADING)
-                            .addComponent(searchTextPanel, 0, 
+                            .addComponent(searchTextPanel, 0,
                                     GroupLayout.DEFAULT_SIZE,
                                     GroupLayout.PREFERRED_SIZE)
-                            .addComponent(suggestionsPanel, 
-                                    GroupLayout.DEFAULT_SIZE, 
-                                    GroupLayout.DEFAULT_SIZE, 
+                            .addComponent(suggestionsPanel,
+                                    GroupLayout.DEFAULT_SIZE,
+                                    GroupLayout.DEFAULT_SIZE,
                                     GroupLayout.PREFERRED_SIZE))
 
                     );
-            
+
             layout.setVerticalGroup(
                     layout.createSequentialGroup()
                     .addComponent(searchTextPanel)
@@ -526,7 +530,7 @@ public class AutocompleteGUI extends JFrame {
         }
 
         /**
-         * Re-populates the drop-down menu with the new suggestions, and 
+         * Re-populates the drop-down menu with the new suggestions, and
          * resizes the containing panel vertically
          */
         private void updateListSize()
@@ -535,11 +539,11 @@ public class AutocompleteGUI extends JFrame {
             if (suggestions.getModel().getSize() < k) {
                 rows = suggestions.getModel().getSize();
             }
-            
+
             int suggWidth = searchText.getPreferredSize().width;
             int suggPanelWidth = suggestionsPanel.getPreferredSize().width;
             int suggHeight = rows*suggestions.getFixedCellHeight();
-            
+
             suggestions.setPreferredSize(new Dimension(suggWidth, suggHeight));
             suggestionsPanel.setPreferredSize(new Dimension(suggPanelWidth, suggHeight + extraMargin));
             suggestionsPanel.setMaximumSize(new Dimension(suggPanelWidth, suggHeight + extraMargin));
@@ -560,7 +564,7 @@ public class AutocompleteGUI extends JFrame {
          * @param text string to search for
          */
         public void getSuggestions(String text) {
-            
+
             // don't search for suggestions if there is no input
             if (text.equals("")) {
                 suggestions.setListData(new String[0]);
@@ -581,7 +585,7 @@ public class AutocompleteGUI extends JFrame {
                 if (Math.min(k, allResults.length) > 0) {
                     for (int i = 0; i < results.length; i++) {
 
-                        // A bit of a hack to get the Term's query string 
+                        // A bit of a hack to get the Term's query string
                         // and weight from toString()
                         String next = allResults[i].toString();
                         if (allResults[i] == null) {
@@ -601,16 +605,16 @@ public class AutocompleteGUI extends JFrame {
                         if (query.length() > suggListLen.length())
                             query = query.substring(0, suggListLen.length());
 
-                        // create the table HTML 
-                        results[i] = "<html><table width=\"" 
+                        // create the table HTML
+                        results[i] = "<html><table width=\""
                                 + searchText.getPreferredSize().width + "\">"
-                                + "<tr><td align=left>" 
+                                + "<tr><td align=left>"
                                 + query.substring(0, textLen + 1)
                                 + "<b>" + query.substring(textLen + 1) + "</b>";
                         if (displayWeights) {
                             results[i] += "<td width=\"10%\" align=right>"
                                     + "<font size=-1><span id=\"weight\" "
-                                    + "style=\"float:right;color:gray\">" 
+                                    + "style=\"float:right;color:gray\">"
                                     + weight + "</font>";
                         }
                         results[i] += "</table></html>";
@@ -684,7 +688,7 @@ public class AutocompleteGUI extends JFrame {
     /**
      * Creates an AutocompleteGUI object and start it continuously running
      * @param args the filename from which the Autocomplete object is populated
-     * and the integer k which defines the maximum number of objects in the 
+     * and the integer k which defines the maximum number of objects in the
      * dropdown menu
      */
     public static void main(String[] args) {

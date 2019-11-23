@@ -36,17 +36,17 @@ public class BinarySearchDeluxe {
           if(right - left <= 1){
             return currEarliest;
           }
-            return Math.min(firstBinarySearch(a,key,comparator,left,mid-1,currEarliest),currEarliest);
+            return Math.min(firstBinarySearch(a,key,comparator,left,mid,currEarliest),currEarliest);
         } else if (comparator.compare(a[mid], key) > 0) {
           if(right - left <= 1){
             return currEarliest;
           }
-            return Math.min(firstBinarySearch(a,key,comparator,left,mid-1,currEarliest),currEarliest);
+            return Math.min(firstBinarySearch(a,key,comparator,left,mid,currEarliest),currEarliest);
         } else if (comparator.compare(a[mid], key) < 0) {
           if(right - left <= 1){
             return currEarliest;
           }
-            return Math.min(firstBinarySearch(a,key,comparator,mid+1,right,currEarliest),currEarliest);
+            return Math.min(firstBinarySearch(a,key,comparator,mid,right,currEarliest),currEarliest);
         }
       }
 
@@ -61,17 +61,17 @@ public class BinarySearchDeluxe {
           if(right - left <= 1){
             return currLatest;
           }
-            return Math.max(lastBinarySearch(a,key,comparator,mid+1,right,currLatest),currLatest);
+            return Math.max(lastBinarySearch(a,key,comparator,mid,right,currLatest),currLatest);
         } else if (comparator.compare(a[mid], key) > 0) {
           if(right - left <= 1){
             return currLatest;
           }
-            return Math.max(lastBinarySearch(a,key,comparator,left,mid-1,currLatest),currLatest);
+            return Math.max(lastBinarySearch(a,key,comparator,left,mid,currLatest),currLatest);
         } else if (comparator.compare(a[mid], key) < 0) {
           if(right - left <= 1){
             return currLatest;
           }
-            return Math.max(lastBinarySearch(a,key,comparator,mid+1,right,currLatest),currLatest);
+            return Math.max(lastBinarySearch(a,key,comparator,mid,right,currLatest),currLatest);
         }
       }
 
@@ -90,6 +90,7 @@ public class BinarySearchDeluxe {
             String query = in.readLine();
             terms[i] = new Term(query.trim(), weight);
         }
+
         Arrays.sort(terms);
 
         Term term = new Term(prefix);
